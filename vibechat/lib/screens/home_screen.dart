@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.only(bottom: 10.0),
         child: FloatingActionButton(
           onPressed: () {},
-          child: Icon(Icons.add_comment),
+          child: Icon(Icons.add_comment, color: Colors.deepOrange),
         ),
       ),
     );
