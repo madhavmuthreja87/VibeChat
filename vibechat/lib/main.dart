@@ -8,8 +8,11 @@ import 'package:vibechat/screens/splash_screen.dart';
 //global object for accessing device screen size
 late Size mq;
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   //to get full screen while opening splash screen,means buttons should not visible
   SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.immersiveSticky,
@@ -33,21 +36,21 @@ class MyApp extends StatelessWidget {
       title: "Vibe Chat",
       theme: ThemeData(
         primaryColor: Colors.orange,
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: const Color.fromARGB(255, 248, 204, 147),
-        ),
+
         appBarTheme: AppBarTheme(
-          //Ek baar app bar ka theme decide krna padega bass
           elevation: 1,
           centerTitle: true,
+          backgroundColor: Colors.orange,
           titleTextStyle: TextStyle(
             fontWeight: FontWeight.normal,
             color: Colors.white,
             fontSize: 19,
           ),
           iconTheme: IconThemeData(color: Colors.black),
+        ),
 
-          backgroundColor: Colors.transparent,
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          backgroundColor: const Color.fromARGB(255, 248, 204, 147),
         ),
       ),
 

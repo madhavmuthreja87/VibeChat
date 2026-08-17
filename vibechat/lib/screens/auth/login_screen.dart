@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:vibechat/helper/dialog.dart';
+
 import 'package:vibechat/screens/home_screen.dart';
 
 import '../../main.dart';
@@ -25,6 +29,61 @@ class _LoginScreenState extends State<LoginScreen> {
         _isAnimate = true;
       });
     });
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+
+  Future<UserCredential?> signInWithGoogle() async {
+    // Navigator.pop(context);
+    try {
+      await _googleSignIn.initialize();
+
+      await InternetAddress.lookup("google.com");
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate();
+
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        idToken: googleAuth.idToken,
+      );
+
+      return await _auth.signInWithCredential(credential);
+    } catch (e) {
+      Dialogs.showSnackBar(context, "Something went wrong(Check Internet)");
+      print("Google Sign-in Error: $e");
+      return null;
+    }
+  }
+
+  _handleGoogleButtonClick() async {
+    Dialogs.showProgressBar(context);
+    await signInWithGoogle();
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      print(
+        '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!              User Details:            !!!!!!!!!!!!!!!!!!111',
+      );
+
+      print(user);
+      print(user?.displayName);
+      print(user?.email);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => HomeScreen()),
+      );
+    }
+  }
+
+  _signOut() async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      await GoogleSignIn.instance.signOut();
+    } catch (e) {
+      print("Sign out error: $e");
+    }
   }
 
   @override
@@ -67,11 +126,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 shadowColor: Colors.blueGrey,
                 backgroundColor: const Color.fromARGB(255, 248, 215, 171),
               ),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => HomeScreen()),
+              onPressed: () async {
+                print(
+                  "!!!!!!!!!!!!!!!!!              Google SignIn button Tapped              !!!!!!!!!!!!!!!",
                 );
+                await _handleGoogleButtonClick();
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

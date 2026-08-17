@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vibechat/screens/auth/login_screen.dart';
@@ -22,10 +23,21 @@ class _SplashScreenState extends State<SplashScreen> {
       SystemChrome.setEnabledSystemUIMode(
         SystemUiMode.edgeToEdge,
       ); //Back to screen with buttons
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
+
+      if (FirebaseAuth.instance.currentUser == null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
+        );
+      } else {
+        print(
+          "!!!!!!!!!!!!!!!!!!!!!!!!!                             User details (Already Logged In): ${FirebaseAuth.instance.currentUser}                        !!!!!!!!!!!!!!!!!!!!!!",
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
     });
   }
 
