@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vibechat/main.dart';
@@ -23,7 +24,15 @@ class _ChatUserCardState extends State<ChatUserCard> {
       child: InkWell(
         onTap: () {},
         child: ListTile(
-          leading: const CircleAvatar(child: Icon(Icons.person)),
+          leading: CachedNetworkImage(
+            imageUrl:
+                'https://unsplash.com/photos/low-sun-over-dark-ocean-waves-u4-8JlvESrQ',
+
+            placeholder: (context, url) => CircleAvatar(
+              child: Icon(Icons.person),
+            ), //CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+          ),
           title: Text(widget.user.name!),
           subtitle: Text(widget.user.about!, maxLines: 1),
           trailing: Text(

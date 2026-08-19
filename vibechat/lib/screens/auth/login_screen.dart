@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:vibechat/api/apis.dart';
 import 'package:vibechat/helper/dialog.dart';
 
 import 'package:vibechat/screens/home_screen.dart';
@@ -70,10 +71,19 @@ class _LoginScreenState extends State<LoginScreen> {
       print(user?.displayName);
       print(user?.email);
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => HomeScreen()),
-      );
+      if (await Apis.userExists()) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+      } else {
+        await Apis.createUser().then(
+          (value) => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
+          ),
+        );
+      }
     }
   }
 
