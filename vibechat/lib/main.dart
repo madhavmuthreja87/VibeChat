@@ -35,9 +35,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Vibe Chat",
       theme: ThemeData(
-        primaryColor: Colors.orange,
-
-        appBarTheme: AppBarTheme(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.orange),
+        appBarTheme: const AppBarTheme(
           elevation: 1,
           centerTitle: true,
           backgroundColor: Colors.orange,
@@ -49,8 +48,8 @@ class MyApp extends StatelessWidget {
           iconTheme: IconThemeData(color: Colors.black),
         ),
 
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor: const Color.fromARGB(255, 248, 204, 147),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Color.fromARGB(255, 248, 204, 147),
         ),
       ),
 

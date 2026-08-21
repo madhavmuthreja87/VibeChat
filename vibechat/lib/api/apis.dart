@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:vibechat/models/chat_user.dart';
@@ -9,12 +11,28 @@ class Apis {
 
   static User get user => auth.currentUser!;
 
+  static late Chat_User me;
+
   static Future<bool> userExists() async {
     return (await firestore
             .collection('users')
             .doc(auth.currentUser!.uid)
             .get())
         .exists;
+  }
+
+  static Future<void> getSelfInfo() async {
+    await firestore.collection('users').doc(auth.currentUser!.uid).get().then((
+      user,
+    ) async {
+      if (user.exists) {
+        me = Chat_User.fromJson(user.data()!);
+        log("MY DATA : ${user.data()}");
+      } else {
+        await createUser();
+        await getSelfInfo();
+      }
+    });
   }
 
   static Future<void> createUser() async {
@@ -35,5 +53,25 @@ class Apis {
         .collection('users')
         .doc(user.uid)
         .set(chat_User.toJson());
+  }
+
+  // for getting all users from firestore database
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
+    return firestore
+        .collection('users')
+        .where("id", isNotEqualTo: user.uid)
+        .snapshots();
+  }
+
+  static Future<void> UpdateUserInfo() async {
+    try {
+      await firestore.collection('users').doc(user.uid).update({
+        'name': me.name,
+        'about': me.about,
+      });
+      log("User info updated successfully");
+    } catch (e) {
+      log("Update eroor: $e");
+    }
   }
 }

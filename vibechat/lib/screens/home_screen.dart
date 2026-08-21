@@ -8,6 +8,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:vibechat/api/apis.dart';
 import 'package:vibechat/main.dart';
 import 'package:vibechat/models/chat_user.dart';
+import 'package:vibechat/screens/profile_screen.dart';
 import 'package:vibechat/widgets/chat_user_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,6 +20,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Chat_User> list = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Apis.getSelfInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +43,15 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: Icon(Icons.home),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ProfileScreen(user: Apis.me)),
+              );
+            },
+            icon: const Icon(Icons.more_vert),
+          ),
         ],
       ),
 
@@ -50,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       body: StreamBuilder(
-        stream: Apis.firestore.collection('users').snapshots(),
+        stream: Apis.getAllUsers(),
         builder: (context, snapshot) {
           // if (snapshot.hasError) {
           //   log("Firestore Error: ${snapshot.error}");

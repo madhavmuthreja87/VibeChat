@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:vibechat/main.dart';
 import 'package:vibechat/models/chat_user.dart';
@@ -24,20 +24,32 @@ class _ChatUserCardState extends State<ChatUserCard> {
       child: InkWell(
         onTap: () {},
         child: ListTile(
-          leading: CachedNetworkImage(
-            imageUrl:
-                'https://unsplash.com/photos/low-sun-over-dark-ocean-waves-u4-8JlvESrQ',
+          leading: ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(mq.height * .03),
+            child: CachedNetworkImage(
+              width: mq.height * .055,
+              height: mq.height * .055,
+              imageUrl: widget.user.image!,
 
-            placeholder: (context, url) => CircleAvatar(
-              child: Icon(Icons.person),
-            ), //CircularProgressIndicator(),
-            errorWidget: (context, url, error) => Icon(Icons.error),
+              placeholder: (context, url) => CircleAvatar(
+                child: Icon(Icons.person),
+              ), //CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ),
           ),
           title: Text(widget.user.name!),
           subtitle: Text(widget.user.about!, maxLines: 1),
-          trailing: Text(
-            widget.user.lastActive!,
-            style: TextStyle(color: Colors.black54),
+          // trailing: Text(
+          //   widget.user.lastActive!,
+          //   style: TextStyle(color: Colors.black54),
+          // ),
+          trailing: Container(
+            height: 15,
+            width: 15,
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
       ),
