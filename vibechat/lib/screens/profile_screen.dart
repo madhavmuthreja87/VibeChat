@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:vibechat/api/apis.dart';
 import 'package:vibechat/helper/dialog.dart';
 
@@ -26,7 +27,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  String? _image;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -86,21 +87,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(width: mq.width, height: mq.height * .03),
                   Stack(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadiusGeometry.circular(
-                          mq.height * .4,
-                        ),
-                        child: CachedNetworkImage(
-                          width: mq.height * .2,
-                          height: mq.height * .2,
-                          fit: BoxFit.fill,
-                          imageUrl: widget.user.image!,
-                          placeholder: (context, url) =>
-                              CircleAvatar(child: Icon(Icons.person)),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
-                        ),
-                      ),
+                      _image != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadiusGeometry.circular(
+                                mq.height * .4,
+                              ),
+                              child: CachedNetworkImage(
+                                width: mq.height * .2,
+                                height: mq.height * .2,
+                                fit: BoxFit.fill,
+                                imageUrl: widget.user.image!,
+                                placeholder: (context, url) =>
+                                    CircleAvatar(child: Icon(Icons.person)),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              ),
+                            )
+                          : Icon(Icons.person),
 
                       Positioned(
                         bottom: 0,
@@ -108,7 +111,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: MaterialButton(
                           elevation: 13,
                           color: Colors.amber,
-                          onPressed: () {},
+                          onPressed: () {
+                            _showBottomSheet();
+                          },
                           child: Icon(Icons.edit, color: Colors.white),
                           shape: CircleBorder(),
                         ),
@@ -182,6 +187,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+      ),
+      builder: (_) {
+        return ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.only(
+            top: mq.height * 0.03,
+            bottom: mq.height * 0.07,
+          ),
+          children: [
+            const Text(
+              "Pick Profile Picture",
+              style: TextStyle(fontWeight: FontWeight.w500, fontSize: 22),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: mq.height * 0.02),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    fixedSize: Size(mq.width * 0.3, mq.height * 0.15),
+                  ),
+                  onPressed: () async {
+                    final ImagePicker picker = ImagePicker();
+                    final XFile? image = await picker.pickImage(
+                      source: ImageSource.gallery,
+                    );
+
+                    if (image != null) {
+                      log(
+                        "Image Path: ${image.path}  --  MimeType: ${image.mimeType}",
+                      );
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Image.asset("images/icons8-gallery-64.png"),
+                ),
+
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    fixedSize: Size(mq.width * 0.3, mq.height * 0.15),
+                  ),
+                  onPressed: () {},
+                  child: Image.asset("images/icons8-camera-100.png"),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }
